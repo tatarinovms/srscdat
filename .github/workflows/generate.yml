@@ -40,6 +40,10 @@ jobs:
         run: |
           cd domain-list-community
           go run ./ --datapath=../data --outputname=geosite.dat --outputdir=../
+          cd ..
+          echo "=== Checking output ==="
+          ls -la geosite.dat
+          file geosite.dat
       
       - name: Check geosite.dat
         run: python3 src/check.py geosite.dat
