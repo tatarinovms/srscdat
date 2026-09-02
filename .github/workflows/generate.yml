@@ -34,7 +34,7 @@ jobs:
         run: git clone https://github.com/v2fly/domain-list-community.git
       
       - name: Convert lists
-        run: python3 src/convert.py lists/ data/
+        run: python3 src/convert.py lists/lists/ data/
       
       - name: Generate geosite.dat
         run: |
