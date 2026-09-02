@@ -44,16 +44,13 @@ jobs:
       - name: Check geosite.dat
         run: python3 src/check.py geosite.dat
       
-      - name: Delete old release
-        continue-on-error: true
-        run: gh release delete geosite --yes
+      - name: Upload release asset
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: geosite
+          name: geosite.dat
+          body: "Auto-generated on ${{ github.event.repository.updated_at }}"
+          files: geosite.dat
+          make_latest: true
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
-      - name: Create release
-        run: |
-          gh release create geosite geosite.dat \
-            --title "geosite.dat" \
-            --notes "Auto-generated on $(date -u +%Y-%m-%d %H:%M UTC)"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
