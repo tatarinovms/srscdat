@@ -1,0 +1,6 @@
+data/
+output/
+domain-list-community/
+*.pyc
+__pycache__/
+.DS_Store
