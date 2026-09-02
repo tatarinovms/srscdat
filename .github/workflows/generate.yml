@@ -56,5 +56,6 @@ jobs:
           body: "Auto-generated on ${{ github.event.repository.updated_at }}"
           files: geosite.dat
           make_latest: true
+          draft: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
