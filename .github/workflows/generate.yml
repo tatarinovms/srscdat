@@ -1,0 +1,60 @@
+name: Generate geosite.dat
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # ежедневно в 00:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout srscdat
+        uses: actions/checkout@v4
+      
+      - name: Checkout ShadowRocketSimpleConfig
+        uses: actions/checkout@v4
+        with:
+          repository: tatarinovms/ShadowRocketSimpleConfig
+          path: lists
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+      
+      - name: Clone domain-list-community
+        run: git clone https://github.com/v2fly/domain-list-community.git
+      
+      - name: Convert lists
+        run: python3 src/convert.py lists/ data/
+      
+      - name: Generate geosite.dat
+        run: |
+          cd domain-list-community
+          go run ./ --datapath=../data --outputname=geosite.dat --outputdir=../
+      
+      - name: Check geosite.dat
+        run: python3 src/check.py geosite.dat
+      
+      - name: Delete old release
+        run: gh release delete geosite --yes || true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Create release
+        run: |
+          gh release create geosite geosite.dat \
+            --title "geosite.dat" \
+            --notes "Auto-generated on $(date -u +%Y-%m-%d %H:%M UTC)"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
